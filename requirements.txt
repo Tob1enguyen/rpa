@@ -1,0 +1,8 @@
+playwright
+beautifulsoup4
+requests
+google-genai
+pillow
+python-dotenv
+pandas
+openpyxl
