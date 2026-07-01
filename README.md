@@ -1,7 +1,9 @@
 SmartPost Robotic Process Automation
+
 ![Python](https://img.shields.io/badge/Python-3.x-blue.svg)
 ![Playwright](https://img.shields.io/badge/Playwright-Automation-green.svg)
 ![Gemini AI](https://img.shields.io/badge/Gemini_AI-2.5_Flash-orange.svg)
+
 Dự án tự động hóa (RPA) 2 giai đoạn giúp cào dữ liệu sản phẩm thiết bị HoReCa, tự động dịch, viết content chuẩn SEO bằng AI và đăng tải trực tiếp lên CMS. Rút ngắn thời gian xử lý từ 25 phút xuống chỉ còn 5 phút/sản phẩm!
 
 # Tài liệu Phát triển Sản phẩm
