@@ -9,7 +9,7 @@ def upload_to_cms(seo_title, seo_keywords, slug, short_desc, html_content, thumb
     """
     email = os.environ.get("CMS_EMAIL")
     password = os.environ.get("CMS_PASSWORD")
-    login_url = os.environ.get("CMS_LOGIN_URL", "https:vn")
+    login_url = os.environ.get("CMS_LOGIN_URL", "https://m2mstore.vn/admin/login")
     
     if not email or not password:
         raise ValueError("Chưa cấu hình CMS_EMAIL hoặc CMS_PASSWORD trong file .env")
@@ -34,7 +34,7 @@ def upload_to_cms(seo_title, seo_keywords, slug, short_desc, html_content, thumb
             # Đợi load xong. Nếu bị đẩy ra trang chủ thì ép về trang admin
             page.wait_for_load_state("networkidle")
             if "admin" not in page.url:
-                page.goto("https://vn")
+                page.goto("https://m2mstore.vn/admin")
         except Exception as e:
             raise Exception(f"[LỖI] Xảy ra lỗi ở bước ĐĂNG NHẬP CMS. Kiểm tra lại đường dẫn, email/mật khẩu hoặc kết nối mạng.\nChi tiết mã lỗi: {e}")
             
@@ -142,13 +142,13 @@ def upload_to_cms(seo_title, seo_keywords, slug, short_desc, html_content, thumb
             raise Exception(f"[LỖI] Xảy ra lỗi ở bước UPLOAD HÌNH ẢNH (Thumbnail).\nChi tiết mã lỗi: {e}")
             
         try:
-            if gallery_paths and len(gallery_paths) > 0:
-                print(f"[{__name__}] Upload {len(gallery_paths)} ảnh Gallery...")
-                abs_galleries = [os.path.abspath(p) for p in gallery_paths if os.path.exists(p)]
+            if (gallery_paths and len(gallery_paths) > 0) or (thumbnail_path and os.path.exists(thumbnail_path)):
+                abs_galleries = [os.path.abspath(p) for p in gallery_paths if os.path.exists(p)] if gallery_paths else []
+                print(f"[{__name__}] Xử lý {len(abs_galleries)} ảnh Gallery và Thumbnail vào bộ sưu tập...")
+                
+                page.locator("#lfm_gallery").click()
                 
                 if abs_galleries:
-                    page.locator("#lfm_gallery").click()
-                    
                     with page.expect_file_chooser() as fc_info:
                         try:
                             page.locator("#mlib-upload-tab div").filter(has_text="Kéo thả files vào đây hoặc nh").click(timeout=3000)
@@ -161,24 +161,23 @@ def upload_to_cms(seo_title, seo_keywords, slug, short_desc, html_content, thumb
                     print(f"[{__name__}] Đang chờ hệ thống upload {len(abs_galleries)} ảnh Gallery...")
                     page.wait_for_timeout(3000 + 1500 * len(abs_galleries))
                     
-                    page.locator("#mlib-media-li").click()
-                    page.wait_for_timeout(1000)
+                page.locator("#mlib-media-li").click()
+                page.wait_for_timeout(1000)
+                
+                # Multi-select các ảnh (bao gồm ảnh gallery vừa tải và ảnh thumbnail tải trước đó)
+                total_images_to_select = len(abs_galleries) + (1 if thumbnail_path and os.path.exists(thumbnail_path) else 0)
+                for i in range(total_images_to_select):
+                    page.locator(".mlib-thumbs").nth(i).click(modifiers=["ControlOrMeta"])
+                    page.wait_for_timeout(500)
                     
-                    # Multi-select các ảnh vừa tải (chúng sẽ nằm ở đầu danh sách)
-                    # Tổng số ảnh cần chọn bằng số ảnh gallery cộng thêm ảnh thumbnail (nếu có)
-                    total_images_to_select = len(abs_galleries) + (1 if thumbnail_path and os.path.exists(thumbnail_path) else 0)
-                    for i in range(total_images_to_select):
-                        page.locator(".mlib-thumbs").nth(i).click(modifiers=["ControlOrMeta"])
-                        page.wait_for_timeout(500)
-                        
-                    page.wait_for_timeout(1000)
-                    
-                    try:
-                        page.locator("text=/Chèn [Ff]ile/i").last.click(timeout=3000)
-                    except:
-                        pass
-                    
-                    page.wait_for_timeout(1000)
+                page.wait_for_timeout(1000)
+                
+                try:
+                    page.locator("text=/Chèn [Ff]ile/i").last.click(timeout=3000)
+                except:
+                    pass
+                
+                page.wait_for_timeout(1000)
                     
         except Exception as e:
             raise Exception(f"[LỖI] Xảy ra lỗi ở bước LƯU THƯ VIỆN ẢNH (Gallery).\nChi tiết mã lỗi: {e}")

@@ -1,0 +1,54 @@
+# ==========================================
+# Môi trường & Khóa bảo mật (Credentials)
+# ==========================================
+.env
+.env.*
+!.env.example
+
+# ==========================================
+# Python Cache & Build
+# ==========================================
+__pycache__/
+*.py[cod]
+*$py.class
+*.spec
+dist/
+build/
+*.egg-info/
+
+# ==========================================
+# File Dữ liệu & Tài liệu (Excel, PDF & Hình ảnh)
+# ==========================================
+*.xlsx
+*.xls
+*.xlsm
+*.csv
+*.pdf
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+*.bmp
+
+# ==========================================
+# Nội dung trong thư mục tạm & hình ảnh
+# (Chỉ ẩn nội dung bên trong, giữ lại thư mục nhờ .gitkeep)
+# ==========================================
+temp_data/*
+!temp_data/.gitkeep
+
+tempdata/*
+!tempdata/.gitkeep
+
+picture/*
+!picture/.gitkeep
+
+# ==========================================
+# Cấu hình IDE, Hệ điều hành & Agent
+# ==========================================
+.agents/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

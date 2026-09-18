@@ -25,18 +25,16 @@ def rename_images_in_folder(folder_path, product_name):
         print(f"[{__name__}] Không có file ảnh nào trong thư mục {folder_path}")
         return {"thumbnail": None, "gallery": []}
         
-    # Sắp xếp ảnh để xử lý. Tìm ảnh bắt đầu bằng "1" để làm thumbnail.
-    thumbnail_file = None
-    for img in images:
-        if img.startswith('1.') or img.startswith('1-') or img.startswith('1_') or img == '1' + os.path.splitext(img)[1]:
-            thumbnail_file = img
-            break
-            
-    if not thumbnail_file and images:
-        # Nếu không có ảnh nào bắt đầu bằng 1, lấy đại ảnh đầu tiên theo alphabet
-        images.sort()
-        thumbnail_file = images[0]
+    # Sắp xếp ảnh theo thứ tự toán học của con số trong tên file.
+    def extract_number(f):
+        match = re.search(r'\d+', f)
+        return int(match.group()) if match else float('inf')
         
+    # Sắp xếp ưu tiên theo số, nếu không có số thì sắp xếp theo bảng chữ cái
+    images.sort(key=lambda x: (extract_number(x), x.lower()))
+    
+    thumbnail_file = images[0]
+    
     gallery_files = [img for img in images if img != thumbnail_file]
     
     safe_product_name = clean_filename(product_name)

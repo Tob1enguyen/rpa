@@ -6,3 +6,4 @@ pillow
 python-dotenv
 pandas
 openpyxl
+pypdf
